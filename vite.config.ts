@@ -8,5 +8,5 @@ export default defineConfig({
   build: {
     outDir: 'dist',
   },
-  base: './', // ✅ Ensures assets work on Azure
+  base: './', 
 })
