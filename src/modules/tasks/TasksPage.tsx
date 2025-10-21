@@ -49,36 +49,37 @@ export function TasksPage() {
         )}
       </div>
 
-      <div className="bg-white border rounded-xl overflow-hidden">
+      <div className="bg-white border rounded-xl">
+        <div className="overflow-x-auto">
         <table className="min-w-full text-sm">
           <thead className="bg-gray-50 text-left">
             <tr>
-              <th className="px-6 py-3">Title</th>
-              <th className="px-6 py-3">Description</th>
-              <th className="px-6 py-3">Status</th>
-              <th className="px-6 py-3">Assigned To</th>
-              <th className="px-6 py-3 text-right"></th>
+              <th className="px-3 py-2 md:px-6 md:py-3">Title</th>
+              <th className="px-3 py-2 md:px-6 md:py-3 hidden sm:table-cell">Description</th>
+              <th className="px-3 py-2 md:px-6 md:py-3">Status</th>
+              <th className="px-3 py-2 md:px-6 md:py-3 hidden sm:table-cell">Assigned To</th>
+              <th className="px-3 py-2 md:px-6 md:py-3 text-right"></th>
             </tr>
           </thead>
 
           <tbody>
             {isLoading && (
               <tr>
-                <td className="px-6 py-4" colSpan={5}>
+                <td className="px-3 py-4 md:px-6" colSpan={5}>
                   Loading...
                 </td>
               </tr>
             )}
             {error && (
               <tr>
-                <td className="px-6 py-4 text-red-600" colSpan={5}>
+                <td className="px-3 py-4 md:px-6 text-red-600" colSpan={5}>
                   {(error as any)?.message || String(error)}
                 </td>
               </tr>
             )}
             {!isLoading && !error && tasks.length === 0 && (
               <tr>
-                <td className="px-6 py-6 text-gray-500" colSpan={5}>
+                <td className="px-3 py-6 md:px-6 text-gray-500" colSpan={5}>
                   No tasks yet.
                 </td>
               </tr>
@@ -86,22 +87,24 @@ export function TasksPage() {
 
             {tasks.map((t) => (
               <tr key={t._id || t.title} className="border-t">
-                <td className="px-6 py-4 font-medium">{t.title}</td>
-                <td className="px-6 py-4 text-gray-600 max-w-[28rem]">
+                <td className="px-3 py-4 md:px-6 font-medium">{t.title}</td>
+                <td className="px-3 py-4 md:px-6 text-gray-600 max-w-[28rem] hidden sm:table-cell">
                   {t.description}
                 </td>
-                <td className="px-6 py-4">
+                <td className="px-3 py-4 md:px-6">
                   <StatusBadge value={t.status} />
                 </td>
-                <td className="px-6 py-4 flex items-center gap-3">
+                <td className="px-3 py-4 md:px-6 hidden sm:table-cell">
+                  <div className="flex items-center gap-3">
                   <Avatar name={t.assignedTo?.name || ""} size={36} />
                   <span className="text-sm text-gray-800">
                     {t.assignedTo?.name || "Unassigned"}
                   </span>
+                  </div>
                 </td>
 
 
-                <td className="px-6 py-4 text-right">
+                <td className="px-3 py-4 md:px-6 text-right">
                   {/*  Admin can edit/delete any task */}
                   {isAdmin && (
                     <>
@@ -110,13 +113,13 @@ export function TasksPage() {
                           setEditing(t);
                           setOpen(true);
                         }}
-                        className="px-3 py-1 border rounded hover:bg-gray-50"
+                        className="px-3 py-1 border rounded hover:bg-gray-50 text-xs md:text-sm"
                       >
                         Edit
                       </button>
                       <button
                         onClick={() => t._id && del.mutate(t._id)}
-                        className="ml-2 px-3 py-1 border border-red-300 text-red-600 rounded hover:bg-red-50"
+                        className="ml-2 px-3 py-1 border border-red-300 text-red-600 rounded hover:bg-red-50 text-xs md:text-sm"
                       >
                         Delete
                       </button>
@@ -130,7 +133,7 @@ export function TasksPage() {
                         setEditing(t);
                         setOpen(true);
                       }}
-                      className="px-3 py-1 border  bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
+                      className="px-3 py-1 border bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-xs md:text-sm"
                     >
                       Update Status
                     </button>
@@ -140,6 +143,7 @@ export function TasksPage() {
             ))}
           </tbody>
         </table>
+        </div>
       </div>
 
       {/* Modal opens for both Admin and task owner */}
