@@ -53,6 +53,21 @@ export function UserManagement() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["users"] }),
   });
 
+  // --- Helpers ---
+  const ADMIN_ROLE_NAME = "Admin";
+
+  function isAdminUser(user: User) {
+    return user.role?.name?.toLowerCase() === ADMIN_ROLE_NAME.toLowerCase();
+  }
+
+  // (Optional) prevent self-delete if you have the current user from context
+  // const currentUser = useAuth()?.user;
+  function canDeleteUser(user: User) {
+    if (isAdminUser(user)) return false; // block Admin deletion
+    // if (currentUser && currentUser._id === user._id) return false; // block self-delete
+    return true;
+  }
+
   // --- Handlers ---
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -92,7 +107,7 @@ export function UserManagement() {
     <div className="space-y-6">
       <h3 className="text-xl font-semibold">User Management</h3>
 
-      {/*  User Form */}
+      {/* User Form */}
       <form
         onSubmit={handleSubmit}
         className="flex flex-col gap-3 bg-gray-50 p-4 rounded-lg border"
@@ -161,7 +176,7 @@ export function UserManagement() {
         </button>
       </form>
 
-      {/*  User List */}
+      {/* User List */}
       {isLoading && <div>Loading users...</div>}
       {error && (
         <div className="text-red-600">
@@ -186,6 +201,7 @@ export function UserManagement() {
                   </div>
                 </div>
               </div>
+
               <div className="flex gap-2 text-sm">
                 <button
                   onClick={() => handleEdit(u)}
@@ -193,12 +209,22 @@ export function UserManagement() {
                 >
                   Edit
                 </button>
-                <button
-                  onClick={() => deleteMutation.mutate(u._id)}
-                  className="text-red-600 hover:underline"
-                >
-                  Delete
-                </button>
+
+                {canDeleteUser(u) ? (
+                  <button
+                    onClick={() => deleteMutation.mutate(u._id)}
+                    className="text-red-600 hover:underline"
+                  >
+                    Delete
+                  </button>
+                ) : (
+                  <span
+                    className="text-gray-400 cursor-not-allowed"
+                    title="Admin accounts cannot be deleted"
+                  >
+                    Delete
+                  </span>
+                )}
               </div>
             </div>
           ))}
